@@ -1,0 +1,234 @@
+#!/usr/bin/perl
+
+#
+# UtoPeak - Automatic Estimation of DVFS Potential
+# Copyright (C) 2013 Universite de Versailles
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+
+
+
+
+use strict;
+use Getopt::Long;
+use Pod::Usage;
+use IO::Handle;
+use Env;
+use Env qw(UTO_ROOT_DIR UTO_SRC_ROOT_DIR LOG_FOLDER UTILS_SCRIPTS);
+
+
+main();
+
+sub main
+{
+	check_shrc();
+	clean_log();
+	print "installing...";
+	install_libpfm();
+	install_libenergy();
+	install_test();
+	check_cpufreq_access();
+	check_msr_access();
+	print "DONE\n";
+}
+
+sub clean_log
+{
+	system("rm -f ${LOG_FOLDER}/*");
+}
+
+sub check_shrc
+{
+	if( $UTO_SRC_ROOT_DIR eq "" || $UTO_ROOT_DIR eq "" || $LOG_FOLDER eq "")
+	{
+		print "ABORTED : you have to source UtoPeak/config/shrc file\n";
+		exit 1;
+	}
+}
+
+
+sub install_libpfm
+{
+	print "\n	Compiling libpfm-4.2..."; 
+	system("cd ${UTO_SRC_ROOT_DIR}/libraries/pfm/ && make 1> /dev/null 2> ${LOG_FOLDER}/libpfm_compilation_error");
+	if ( $? != 0)
+	{
+		print "ERROR\n";
+		print "	read \"${LOG_FOLDER}libpfm_compilation_error\" to get more informations\n"
+		
+	}
+	else
+	{
+		print "OK\n";
+		system("rm -f ${LOG_FOLDER}libpfm_compilation_error");
+
+	}
+
+}
+
+sub install_libenergy
+{
+	print "	Compiling libenergy..."; 
+   system("cd ${UTO_SRC_ROOT_DIR}/libraries/energy/ && make 1> /dev/null 2> ${LOG_FOLDER}/libenergy_compilation_error");
+   if ( $? != 0)
+   {
+      print "ERROR\n";
+      print "	read \"${LOG_FOLDER}libenergy_compilation_error\" to get more informations\n"
+
+   }
+   else
+   {
+      print "OK\n";
+		system("rm -f ${LOG_FOLDER}libenergy_compilation_error");
+   }
+
+}
+
+sub install_test
+{
+ 	print "	Compiling test applications...";   
+   system("cd ${UTO_ROOT_DIR}/test_application/ && make 1> /dev/null 2> ${LOG_FOLDER}/test_compilation_error");
+   if ( $? != 0)
+   {
+      print "ERROR\n";
+      print "	read \"${LOG_FOLDER}test_compilation_error\" to get more informations\n"
+
+   }
+   else
+   {
+      print "OK\n";
+		system("rm -f ${LOG_FOLDER}test_compilation_error");
+   }
+
+}
+
+sub check_cpufreq_access
+{
+	print "	checking CPUFREQ folder presence...";
+	if(not (-e "/sys/devices/system/cpu/cpu0/cpufreq"))
+	{
+		print "ERROR\n";
+		return;
+	}
+	else
+	{
+		print "OK\n";
+	}
+	print "	checking CPUFREQ user access...";	
+	if(not (-r "/sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed") || not(-w "/sys/devices/system/cpu/cpu0/cpufreq/scaling_setspeed"))
+	{
+		print "ERROR\n";
+		print "	Do you want to change Read/Write cpufreq files access ? (super user access is needed) [y/N]: ";
+		my $io = IO::Handle->new();
+		$io->fdopen(fileno(STDIN),"r");	
+		my $ret=$io->getc;
+		chomp $ret;
+		$io->close;
+		if ($ret eq "Y" || $ret eq "y")
+		{
+			system("${UTILS_SCRIPTS}/dvfs4all.sh");
+			if($? != 0)
+			{
+				print "	ERROR : you should execute \"${UTILS_SCRIPTS}/dvfs4all.sh\" as super user\n";
+			}
+			else
+			{
+				print "	SUCCESS\n";
+			}
+		}
+		else
+		{
+			print "	ERROR : you must execute \"${UTILS_SCRIPTS}/dvfs4all.sh\" as super user to get UtoPeak working correctly\n";
+		}	 
+	}
+	else
+	{
+		print "OK\n";
+	}
+}
+
+sub check_msr_access
+{
+	print "	checking MSR module presence...";
+	my $outLsmod = `lsmod | grep msr | wc -l`;
+	chomp $outLsmod;
+	if($outLsmod eq 0)
+	{
+		print "ERROR\n";
+		print "	Do you want to load MSR module ? (super user accesss is needed) [y/N]: ";
+		my $io = IO::Handle->new();
+		$io->fdopen(fileno(STDIN),"r");	
+		my $ret=$io->getc;
+		chomp $ret;
+		$io->close;
+
+		if ($ret eq "Y" || $ret eq "y")
+		{
+			system("sudo modprobe msr");
+			if($? != 0)
+			{
+				print "	ERROR : you should execute \"modprobe msr\" as super user\n";
+			}
+			else
+			{
+				print "	SUCESS\n";
+			}
+		}
+		else
+		{
+			print "	ERROR : you must execute \"modprobe msr\" as super user to get UtoPeak working correctly\n";
+			print "	ERROR : you must execute \"${UTILS_SCRIPTS}/msr4all.sh\" as super user to get UtoPeak working correctly\n";
+			return;
+		} 
+	}
+	else
+	{
+		print "OK\n";
+	}
+	
+	print "	checking MSR user access...";
+	if(not (-r "/dev/cpu/0/msr"))
+	{
+		print "ERROR\n";
+		print "	Do you want to change Read msr file access ? (super user access is needed) [y/N]: ";
+		my $io = IO::Handle->new();
+		$io->fdopen(fileno(STDIN),"r");
+		my $ret=$io->getc;
+		chomp $ret;
+		$io->close;
+
+		if ($ret eq "Y" || $ret eq "y")
+		{
+			system("${UTILS_SCRIPTS}/msr4all.sh");
+			if($? != 0)
+			{
+				print "	ERROR : you should execute \"${UTILS_SCRIPTS}/msr4all.sh\" as super user\n";
+			}
+			else
+			{
+				print "	SUCCESS\n";
+			}
+		}
+		else
+		{
+			print "	SKIPPED : you would have to execute \"${UTILS_SCRIPTS}/msr4all.sh\" as super user afterwards\n";
+		}
+	}
+	else
+	{
+		print "OK\n";
+	}
+}

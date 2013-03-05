@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#
+# UtoPeak - Automatic Estimation of DVFS Potential
+# Copyright (C) 2013 Universite de Versailles
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+
+
+UtoPeak_Root=`pwd`
+UtoPeakSrc_Root=${UtoPeak_Root}/Src/
+
+export PATH=$PATH:$UtoPeak_Root;
+export CONFIG_FILES=$UtoPeak_Root/config/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${UtoPeakSrc_Root}/libraries/pfm/libpfm-4.2.0/lib/
+export INSTRUCTION_LIB=${UtoPeakSrc_Root}/libraries/pfm/pfmcounters2.so
+export INI_INSTRUCTION_LIB=${UtoPeakSrc_Root}/libraries/pfm/pfmcounters2.ini
+export CYCLES_LIB=${UtoPeakSrc_Root}/libraries/pfm/ccyclescounters.so
+export INI_CYCLES_LIB=${UtoPeakSrc_Root}/libraries/pfm/ccyclescounters.ini
+export ENERGY_LIB=${UtoPeakSrc_Root}/libraries/energy/energy_msr_snb.so
+export UTILS_SCRIPTS=${UtoPeakSrc_Root}/scripts/utils
+export PROFILING_LIB=${UtoPeakSrc_Root}/libUtoPeak_instru.so
+export EVAL_LIB=${UtoPeakSrc_Root}/libUtoPeak_eval.so
+export LOG_FOLDER=${UtoPeak_Root}/log/
+export APPLICATION_TEST_FOLDER=${UtoPeak_Root}/test_application/
+export UTO_ROOT_DIR=${UtoPeak_Root}
+export UTO_SRC_ROOT_DIR=${UtoPeakSrc_Root}

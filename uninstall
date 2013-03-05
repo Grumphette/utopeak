@@ -1,0 +1,130 @@
+#!/usr/bin/perl
+
+#
+# UtoPeak - Automatic Estimation of DVFS Potential
+# Copyright (C) 2013 Universite de Versailles
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+
+use strict;
+use Getopt::Long;
+use Pod::Usage;
+use Env;
+use Env qw(UTO_ROOT_DIR UTO_SRC_ROOT_DIR LOG_FOLDER);
+
+
+main();
+
+sub main
+{
+	check_shrc();
+	clean_log();
+	print "uninstalling...";
+	uninstall_libpfm();
+	uninstall_libenergy();
+	uninstall_test();
+	uninstall_UtoPeak();
+	print "DONE\n";
+}
+
+sub clean_log
+{
+	system("rm -f ${LOG_FOLDER}/*");
+}
+
+sub check_shrc
+{
+	if( $UTO_SRC_ROOT_DIR eq "" || $UTO_ROOT_DIR eq "" || $LOG_FOLDER eq "")
+	{
+		print "ABORTED : you have to source shrc file\n";
+		die;
+	}
+}
+
+
+sub uninstall_libpfm
+{
+	print "\n	Removing libpfm-4.2..."; 
+	system("cd ${UTO_SRC_ROOT_DIR}/libraries/pfm/ && make clean 1> /dev/null 2> ${LOG_FOLDER}/libpfm_compilation_error");
+	if ( $? != 0)
+	{
+		print "ERROR\n";
+		print "	read \"${LOG_FOLDER}libpfm_compilation_error\" to get more informations\n"
+		
+	}
+	else
+	{
+		print "OK\n";
+		system("rm -f ${LOG_FOLDER}libpfm_compilation_error");
+	}
+
+}
+
+sub uninstall_libenergy
+{
+	print "	Removing libenergy..."; 
+   system("cd ${UTO_SRC_ROOT_DIR}/libraries/energy/ && make clean 1> /dev/null 2> ${LOG_FOLDER}/libenergy_compilation_error");
+   if ( $? != 0)
+   {
+      print "ERROR\n";
+      print "	read \"${LOG_FOLDER}libenergy_compilation_error\" to get more informations\n"
+
+   }
+   else
+   {
+      print "OK\n";
+		system("rm -f ${LOG_FOLDER}libenergy_compilation_error");
+
+   }
+
+}
+
+sub uninstall_test
+{
+ 	print "	Removing test applications...";   
+   system("cd ${UTO_ROOT_DIR}/test_application/ && make clean 1> /dev/null 2> ${LOG_FOLDER}/test_compilation_error");
+   if ( $? != 0)
+   {
+      print "ERROR\n";
+      print "	read \"${LOG_FOLDER}test_compilation_error\" to get more informations\n"
+
+   }
+   else
+   {
+      print "OK\n";
+		system("rm -f ${LOG_FOLDER}test_compilation_error");
+
+   }
+
+}
+
+sub uninstall_UtoPeak
+{
+	print "	Removing UtoPeak..."; 
+   system("cd ${UTO_SRC_ROOT_DIR}/ && make clean 1> /dev/null 2> ${LOG_FOLDER}/utopeak_compilation_error");
+   if ( $? != 0)
+   {
+      print "ERROR\n";
+      print "  read \"${LOG_FOLDER}utopeak_compilation_error\" to get more informations\n"
+   }
+   else
+   {
+      print "OK\n";
+		system("rm -f ${LOG_FOLDER}utopeak_compilation_error");
+
+   }
+
+}

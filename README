@@ -1,0 +1,17 @@
+UtoPeak - Automatic Estimation of DVFS Potential
+
+To install UtoPeak on your machine run the "install.sh" script, it will
+install all the needed dependencies and libraries.
+
+NOTE : UtoPeak only works on SandyBridge for now. (dependencies : msr-tools)
+
+To run UtoPeak on your system :
+./UtoPeak --type=<SEQ|MPI|OMP> --output=<output path> <path to binary>
+but
+./UtoPeak --help will explain how to chose the different options.
+
+NOTE : This version of UtoPeak is currently under a cleaning process, so better output will comes very soon.
+
+Licence :
+	GPLv3
+	See COPYRIGHT file

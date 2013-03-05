@@ -1,0 +1,185 @@
+#!/usr/bin/perl
+
+#
+# UtoPeak - Automatic Estimation of DVFS Potential
+# Copyright (C) 2013 Universite de Versailles
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+
+use strict;
+use Getopt::Long;
+use Pod::Usage;
+use Env;
+use Env qw(UTO_ROOT_DIR UTO_SRC_ROOT_DIR LOG_FOLDER INSTRUCTION_LIB CYCLES_LIB ENERGY_LIB);
+use Cwd 'abs_path';
+
+my $help = '';
+my $apptype = "";
+my $outputPath = "";
+my $ARGC = $#ARGV+1;
+my $fullOutputPath='';
+my $fullPathBench='';
+
+my $getOptErr = GetOptions ('help!' => \$help,
+			 'type=s' => \$apptype,
+			 'output=s' => \$outputPath
+			);
+entryPoint();
+
+sub entryPoint
+{
+	getoptParsing();
+	optionParsing();
+	check_install();
+	build();
+	profiling();
+	sequencingAndEval();	
+}
+
+sub optionParsing
+{
+	if($ARGC !=3)
+	{
+		pod2usage(1);
+	}
+	
+	$fullPathBench=abs_path($ARGV[0]);
+	
+	if((-d $fullPathBench))
+	{
+		print "\n>> Warning : \"${fullPathBench}\" is a folder <<\n\n";
+		exit 1;
+	}
+	if(not(-x $fullPathBench))
+	{
+		print "\n>> Warning : \"${fullPathBench}\" is not an executable file <<\n\n";
+		exit 1;
+	}
+}
+
+sub check_install
+{
+	if(not(-e $INSTRUCTION_LIB) || not(-e $CYCLES_LIB) || not(-e $ENERGY_LIB))
+	{
+		print "\n>> Warning : please install all dependencies by using : ./install <<\n\n";
+		exit 1;
+	}
+}
+
+
+sub getoptParsing
+{
+	if(!$getOptErr)
+	{
+		exit 1;
+	}
+	
+	if($help or $ARGC == 0)
+	{
+		pod2usage(1);
+		exit 2;
+	}
+	
+	if($apptype eq "mpi" or $apptype eq "seq" or $apptype eq "omp")
+	{
+		$apptype = uc $apptype;
+	}
+	
+	if($apptype ne "MPI" and $apptype ne "SEQ" and $apptype ne "OMP")
+	{
+		pod2usage(1);	
+		exit 2;
+	}
+	if($apptype ne "" and $help)
+	{
+		pod2usage(1);
+		exit 2;
+	}
+	if( not(-d $outputPath) and $outputPath ne "")
+	{
+		print "\n>> Warning : outout folder do not exists <<\n\n";
+		exit 1;
+	}
+	else
+	{
+		$fullOutputPath = abs_path($outputPath);
+	}
+}
+
+sub build
+{
+	print "Compiling UtoPeak..."; 
+	system("cd ${UTO_SRC_ROOT_DIR} && make METHOD_NAME=${apptype} clean all 1> /dev/null 2> ${LOG_FOLDER}/utopeak_compilation_error");
+	if ( $? != 0)
+	{
+		print "ERROR\n";
+		print "read \"${LOG_FOLDER}utopeak_compilation_error\" to get more informations\n";
+		exit 1;
+	}
+	else
+	{
+		print "OK\n";
+	}
+}
+
+sub profiling
+{
+	print "Profiling ...\n";
+	system("${UTO_SRC_ROOT_DIR}/scripts/Sampling/sample.sh $fullPathBench $fullOutputPath $apptype");
+	if( $? != 0 )
+	{
+		print "ERROR\n";
+		exit 1;	
+	}
+}
+
+sub sequencingAndEval
+{	
+	system("${UTO_SRC_ROOT_DIR}/scripts/Evaluation/eval.sh $fullPathBench $fullOutputPath $apptype");
+}
+
+__END__
+
+=head1 NAME
+
+UtoPeak - generates a frequency sequence to get the lowest energy consumption for one application execution
+
+=head1 SYNOPSIS
+
+UtoPeak [option] [path to the application binary]
+
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--help>
+
+display Usage
+
+=item B<--type>
+
+[ OMP | MPI | SEQ ] specify if the application uses 
+	OpenMP library, 
+	MPI runtime, 
+	 none of them
+
+=item B<--output>
+
+Output folder path  containing all UtoPeak results
+
+=cut
+
