@@ -133,3 +133,4 @@ void setNice(int targetNice)
       }
    }while ( newNice != targetNice );
 }
+

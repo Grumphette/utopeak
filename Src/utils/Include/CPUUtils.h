@@ -36,3 +36,4 @@ void freeCPUControler(CPUControler* pCPUControler);
 void changeCPUFreq(CPUControler* pCPUControler, int newFreq);
 
 #endif
+

@@ -144,3 +144,4 @@ void changeCPUFreq(CPUControler* pCPUControler, int newFreq)
       fflush(pCPUControler->pCPUControlFiles[i]);
    }
 }
+

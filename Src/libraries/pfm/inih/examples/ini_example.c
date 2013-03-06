@@ -38,3 +38,4 @@ int main(int argc, char* argv[])
         config.version, config.name, config.email);
     return 0;
 }
+

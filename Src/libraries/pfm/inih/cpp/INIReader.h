@@ -46,3 +46,4 @@ private:
 };
 
 #endif  // __INIREADER_H__
+

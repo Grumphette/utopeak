@@ -148,3 +148,4 @@ int ini_parse(const char* filename,
     fclose(file);
     return error;
 }
+

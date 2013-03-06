@@ -62,7 +62,7 @@ sub check_shrc
 
 sub install_libpfm
 {
-	print "\n	Compiling libpfm-4.2..."; 
+	print "\n	Compiling libpfm-4.3..."; 
 	system("cd ${UTO_SRC_ROOT_DIR}/libraries/pfm/ && make 1> /dev/null 2> ${LOG_FOLDER}/libpfm_compilation_error");
 	if ( $? != 0)
 	{

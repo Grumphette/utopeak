@@ -197,3 +197,4 @@ void capture_sampling_end ()
    fprintf(stderr, "[Sequence Eval : INFO] Sampling protocol ended, quiting ...\n");
    fprintf(stderr,"[Sequence Eval : RESULTS] energy : %f\n",nbTotalMSR);
 }
+

@@ -72,3 +72,4 @@ for fileName in sys.argv[1:]:
          print line
       
    outFile.close()
+

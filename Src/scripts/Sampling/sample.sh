@@ -58,3 +58,4 @@ do
 	mv output.csv $OUTPUT/$TESTNAME/${TESTNAME}_${freq}.csv
 
 done
+

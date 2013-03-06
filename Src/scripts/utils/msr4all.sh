@@ -20,3 +20,4 @@
 
 
 sudo chmod a+rw /dev/cpu/*/msr
+

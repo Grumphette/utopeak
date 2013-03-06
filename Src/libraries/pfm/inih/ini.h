@@ -53,3 +53,4 @@ int ini_parse_file(FILE* file,
 #endif
 
 #endif /* __INI_H__ */
+

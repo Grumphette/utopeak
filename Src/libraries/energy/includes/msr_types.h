@@ -59,3 +59,4 @@ typedef struct {
 } MsrDataRecord;
 
 #endif /*MSR_TYPES_H*/
+

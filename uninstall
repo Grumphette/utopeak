@@ -57,7 +57,7 @@ sub check_shrc
 
 sub uninstall_libpfm
 {
-	print "\n	Removing libpfm-4.2..."; 
+	print "\n	Removing libpfm-4.3..."; 
 	system("cd ${UTO_SRC_ROOT_DIR}/libraries/pfm/ && make clean 1> /dev/null 2> ${LOG_FOLDER}/libpfm_compilation_error");
 	if ( $? != 0)
 	{

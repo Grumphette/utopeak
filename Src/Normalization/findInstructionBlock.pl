@@ -69,3 +69,4 @@ while(my $line = <FILE>)
 }
 print $minInstStep."\n";
 `export UTOPEAK_NUM_INST=$minInstStep`;
+

@@ -24,3 +24,4 @@ void capture_sampling_init ();
 void capture_sampling_end ();
 
 #endif
+

@@ -55,3 +55,4 @@ int main(void)
     parse("bad_multi.ini");
     return 0;
 }
+

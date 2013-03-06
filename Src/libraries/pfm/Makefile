@@ -1,6 +1,6 @@
 CFLAGS=-O3 -fPIC
 
-LIBPFM_VER=4.2.0
+LIBPFM_VER=4.3.0
 LIBPFM_BIN=libpfm-$(LIBPFM_VER)/lib/libpfm.so
 LIBPFM_INC=libpfm-$(LIBPFM_VER)/include/
 LIBPFM_LIBPATH=libpfm-$(LIBPFM_VER)/lib/

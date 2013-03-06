@@ -20,3 +20,4 @@
 
 
 sudo chmod a+rw /sys/devices/system/cpu/cpu*/cpufreq/*
+

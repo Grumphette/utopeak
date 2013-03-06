@@ -36,3 +36,4 @@ else
    echo "USAGE: ./sequencer.sh inst_smpl_size  name_of_folder_with_results"
 fi
 
+

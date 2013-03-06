@@ -71,3 +71,4 @@ int mpi_finalize_(int *ierr)
    (void)ierr;
    return MPI_Finalize();
 }
+

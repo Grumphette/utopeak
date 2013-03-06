@@ -130,3 +130,4 @@ timeFile.close()
 
 print "Total energy {0}".format(totalEnergy)
 print "Total cycles {0}".format(totalCycles)
+

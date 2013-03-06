@@ -49,3 +49,4 @@ cd ${HERE}
 rm ${TEST_DIR}/sequence.utopik
 rm ${TEST_DIR}/ccyclescounters.ini
 rm ${TEST_DIR}/pfmcounters2.ini
+
