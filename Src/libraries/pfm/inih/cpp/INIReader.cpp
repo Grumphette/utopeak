@@ -62,3 +62,4 @@ int INIReader::ValueHandler(void* user, const char* section, const char* name,
     reader->_values[MakeKey(section, name)] = value;
     return 1;
 }
+

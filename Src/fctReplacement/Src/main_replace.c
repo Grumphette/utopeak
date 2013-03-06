@@ -32,7 +32,13 @@ static hijack_main_t hijack_original_main;
 static int hijack_main(int argc, char** argv, char** env)
 {
     setenv("LD_PRELOAD","",1); 
-   
+
+#ifdef DEBUG
+	 fprintf(stdout,"[DEBUG] : in hijack_main from <%s>\n",__FILE__);
+	 fprintf(stdout,"          pining core map : %s\n",getenv("GOMP_CPU_AFFINITY"));
+	 fprintf(stdout,"          watching pid : %d\n",getpid());
+#endif
+  
     atexit(capture_sampling_end);
     capture_sampling_init (getpid());
     

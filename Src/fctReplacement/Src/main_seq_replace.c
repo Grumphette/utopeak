@@ -34,9 +34,11 @@ static hijack_main_t hijack_original_main;
 static int hijack_main(int argc, char** argv, char** env)
 {
     setenv("LD_PRELOAD","",1); 
-//#ifdef DEBUG
-	 fprintf(stdout,"[DEBUG] : in hijack_main from : %s\n",__FILE__);
-//#endif
+#ifdef DEBUG
+	 fprintf(stdout,"[DEBUG] : in hijack_main from <%s>\n",__FILE__);
+	 fprintf(stdout,"          pining on core 0\n");
+	 fprintf(stdout,"          watching pid : %d\n",getpid());
+#endif
 
 	 //cpu pinning to prevent the OS from moving the application around avaiblable cores
     pinCPU(0);

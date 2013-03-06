@@ -27,19 +27,33 @@
 #include "mpi_replace.h"
 #include "capture.h"
 
+#include "utils.h"
+
 #define SAMPLING_RANK 0
 
 int MPI_Init(int *argc, char ***argv)
 {
-   int rc,rank;
+   int rc,rank,i;
    rc = PMPI_Init(argc, argv);
    MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+	pinCPU(rank);
 
    if(rank == SAMPLING_RANK)
    {
+#ifdef DEBUG
+	 fprintf(stdout,"[DEBUG] : in hijack_main from <%s>\n",__FILE__);
+	 fprintf(stdout,"          pining map :");
+	 for (i=0;i<rank+1;i++)
+	 {
+		 fprintf(stdout,"%d ",i);
+	 }
+	 fprintf(stdout,"\n");
+	 fprintf(stdout,"          watching pid : %d\n",getpid());
+#endif
+
       capture_sampling_init (getpid());
    }
-
+	
 	//make sure all the mpi process start the reamainder of the application at the same time
 	MPI_Barrier(MPI_COMM_WORLD);
    return rc;

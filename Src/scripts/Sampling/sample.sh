@@ -46,9 +46,10 @@ do
 		LD_PRELOAD=$PROFILING_LIB $TEST
 
 	else
-		source $CONFIG_FILES/mpi.cfg	
+		source $CONFIG_FILES/mpi.cfg
+		mpdboot
 		LD_PRELOAD=$PROFILING_LIB mpirun -n $EXPORTED_NUM_PROC $TEST
-
+		mpdallexit 2> /dev/null
 	fi
 	
 	if [ $? -ne 0 ]

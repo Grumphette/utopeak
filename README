@@ -4,6 +4,7 @@ To install UtoPeak on your machine run the "install.sh" script, it will
 install all the needed dependencies and libraries.
 
 NOTE : UtoPeak only works on SandyBridge for now. (dependencies : msr-tools)
+NOTE : UtoPeak default option for mpi application are design to work with Intel MPI, edit utopeak/config/mpi.cfg to get the correct MPI options
 
 To run UtoPeak on your system :
 ./UtoPeak --type=<SEQ|MPI|OMP> --output=<output path> <path to binary>

@@ -36,12 +36,22 @@ cp ${OUTPUT_PATH}/${TEST_NAME}/sequencing/sequence.utopik ${TEST_DIR}
 cp ${INI_INSTRUCTION_LIB} ${TEST_DIR}
 cp ${INI_CYCLES_LIB} ${TEST_DIR}
 
+
 cd ${TEST_DIR}
-if [[ ("$TYPE" = "SEQ") || ("$TYPE" = "OMP") ]]
+if [ "$TYPE" = "SEQ" ] 
 then
 	LD_PRELOAD=${EVAL_LIB} ./${TEST_NAME}
+
+elif [ "$TYPE" = "OMP" ]
+then
+	source $CONFIG_FILES/openmp.cfg
+	LD_PRELOAD=${EVAL_LIB} ./${TEST_NAME}
+
 else
+	source $CONFIG_FILES/mpi.cfg 
+	mpdboot
 	LD_PRELOAD=${EVAL_LIB} mpirun -n $EXPORTED_NUM_PROC ./${TEST_NAME}
+	mpdallexit 2> /dev/null
 fi
 cd ${HERE}
 

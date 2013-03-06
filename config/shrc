@@ -25,7 +25,7 @@ UtoPeakSrc_Root=${UtoPeak_Root}/Src/
 
 export PATH=$PATH:$UtoPeak_Root;
 export CONFIG_FILES=$UtoPeak_Root/config/
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${UtoPeakSrc_Root}/libraries/pfm/libpfm-4.2.0/lib/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${UtoPeakSrc_Root}/libraries/pfm/libpfm-4.3.0/lib/
 export INSTRUCTION_LIB=${UtoPeakSrc_Root}/libraries/pfm/pfmcounters2.so
 export INI_INSTRUCTION_LIB=${UtoPeakSrc_Root}/libraries/pfm/pfmcounters2.ini
 export CYCLES_LIB=${UtoPeakSrc_Root}/libraries/pfm/ccyclescounters.so
@@ -38,3 +38,4 @@ export LOG_FOLDER=${UtoPeak_Root}/log/
 export APPLICATION_TEST_FOLDER=${UtoPeak_Root}/test_application/
 export UTO_ROOT_DIR=${UtoPeak_Root}
 export UTO_SRC_ROOT_DIR=${UtoPeakSrc_Root}
+

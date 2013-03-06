@@ -23,3 +23,4 @@ $(MSR_OBJ): $(INCLUDES)/msr.c
 
 clean: 
 	rm -rf $(OBJECTS)/*.o *.so
+

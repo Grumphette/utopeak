@@ -6,3 +6,4 @@ CFG(user, name, "Fatty Lumpkin")
 CFG(user, email, "fatty@lumpkin.com")
 
 #undef CFG
+

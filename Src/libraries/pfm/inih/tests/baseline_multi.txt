@@ -41,3 +41,4 @@ user_error.ini: e=3 user=104
 ... multi=brown fox;
 multi_line.ini: e=0 user=105
 bad_multi.ini: e=1 user=105
+

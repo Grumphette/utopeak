@@ -50,32 +50,35 @@ EVAL_OBJ := $(FCT_REPLACE_OBJ) obj/libUtoPeak_eval.o $(UTILS_OBJ)
 
 
 all: libUtoPeak_instru.so libUtoPeak_eval.so
+debug: DFLAGS=-DDEBUG
+debug: all
 
 libUtoPeak_instru.so:$(SAMPLER_OBJ)
 	@echo "$(GCC) $^ -> $@";
-	@$(GCC) -shared $^ -o $@ $(CFLAGS) -I Sampler/Include $(LDFLAGS)
+	@$(GCC) -shared $^ -o $@ $(CFLAGS) $(DFLAGS) -I Sampler/Include $(LDFLAGS)
 	@echo "";
 
 obj/%.o: Sampler/Src/%.c
 	@echo "$(GCC) $^ -> $@";
-	@$(GCC) -fPIC $(CFLAGS) -ISampler/Include -c $< -o $@ $(INCLUDES)
+	@$(GCC) -fPIC $(CFLAGS) $(DFLAGS) -ISampler/Include -c $< -o $@ $(INCLUDES)
 
 libUtoPeak_eval.so: $(EVAL_OBJ)
 	@echo "$(GCC) $^ -> $@";
-	@$(GCC) -shared $^ -o $@ $(CFLAGS) $(LDFLAGS)
+	@$(GCC) -shared $^ -o $@ $(CFLAGS) $(DFLAGS) $(LDFLAGS)
 	@echo "";
 
 obj/%.o: SequenceEvaluator/Src/%.c
 	@echo "$(GCC) $^ -> $@";
-	@$(GCC) -fPIC $(CFLAGS) -ISequenceEvaluator/Include -c $< -o $@ $(INCLUDES)
+	@$(GCC) -fPIC $(CFLAGS) $(DFLAGS) -ISequenceEvaluator/Include -c $< -o $@ $(INCLUDES)
 	
 $(FCT_REPLACE_OBJ):obj/%.o: fctReplacement/Src/%.c
 	@echo "$(GCC) $^ -> $@";
-	@$(GCC) -fPIC $(CFLAGS) -IfctReplacement/Include -c $< -o $@ $(INCLUDES)
+	@$(GCC) -fPIC $(CFLAGS) $(DFLAGS) -IfctReplacement/Include -c $< -o $@ $(INCLUDES)
 		
 $(UTILS_OBJ):obj/%.o: utils/Src/%.c
 	@echo "$(GCC) $^ -> $@";
-	@$(GCC) -fPIC $(CFLAGS) -Iutils/Include -c $< -o $@ $(INCLUDES)
+	@$(GCC) -fPIC $(CFLAGS) $(DFLAGS) -Iutils/Include -c $< -o $@ $(INCLUDES)
 
 clean:
 	rm -f *.so obj/*.o *~ 
+

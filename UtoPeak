@@ -32,10 +32,12 @@ my $outputPath = "";
 my $ARGC = $#ARGV+1;
 my $fullOutputPath='';
 my $fullPathBench='';
+my $debug='';
 
 my $getOptErr = GetOptions ('help!' => \$help,
 			 'type=s' => \$apptype,
-			 'output=s' => \$outputPath
+			 'output=s' => \$outputPath,
+			 'debug!' => \$debug
 			);
 entryPoint();
 
@@ -51,7 +53,7 @@ sub entryPoint
 
 sub optionParsing
 {
-	if($ARGC !=3)
+	if($ARGC <3 or $ARGC >4)
 	{
 		pod2usage(1);
 	}
@@ -121,8 +123,20 @@ sub getoptParsing
 
 sub build
 {
-	print "Compiling UtoPeak..."; 
-	system("cd ${UTO_SRC_ROOT_DIR} && make METHOD_NAME=${apptype} clean all 1> /dev/null 2> ${LOG_FOLDER}/utopeak_compilation_error");
+	print "Compiling UtoPeak"; 
+	my $cible='';
+	if($debug)
+	{
+		print " [DEBUG]...";
+		$cible="debug";
+	}
+	else
+	{
+		print "...";
+		$cible="all";	
+	}
+
+	system("cd ${UTO_SRC_ROOT_DIR} && make METHOD_NAME=${apptype} clean ${cible} 1> /dev/null 2> ${LOG_FOLDER}/utopeak_compilation_error");
 	if ( $? != 0)
 	{
 		print "ERROR\n";

@@ -45,7 +45,7 @@ then
          
          mv ${file}_tmp $file
       done
-	instSampleSize=`./findInstructionBlock.pl $1`
+		instSampleSize=`./findInstructionBlock.pl $1`
       ./sequencer.sh $instSampleSize $1/sequencing/
       export UTOPEAK_NUM_INST=${instSampleSize}
    fi

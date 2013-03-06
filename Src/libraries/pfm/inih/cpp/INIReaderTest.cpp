@@ -18,3 +18,4 @@ int main()
               << reader.GetBoolean("user", "active", true) << "\n";
     return 0;
 }
+
