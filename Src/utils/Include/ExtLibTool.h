@@ -28,6 +28,7 @@ evalGet tmpEvaluationStart;
 
 typedef struct ProbeLib
 {
+	char* pLibName;
    void* pLibHandle;
    void* pProbeHandle;
    

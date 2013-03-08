@@ -70,7 +70,6 @@ int initCPUControler(CPUControler* pCPUControler)
    assert(pCPUControler);
    
    pCPUControler->nbCPUs = getNbCPU();
-   fprintf(stdout, "[UtoPeak : INFO] Number of CPUs: %d\n",pCPUControler->nbCPUs);
  
    FILE *cmd_freq_list = popen("cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies | tr \" \" \"\\n\" | sort -g | sed '1d'","r");
    FILE *cmd_nb_freq = popen("cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_available_frequencies|sed \"s/ /\\n/g\"|wc -l","r");

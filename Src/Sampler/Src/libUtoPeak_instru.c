@@ -108,14 +108,12 @@ void capture_sampling_init (int pid)
    loadProbeLib(probelibs.PROBE_LIB_MSR,&probeLibMSR);
    loadProbeLib2(probelibs.PROBE_LIB_RETIRED_INST,&probeLibRetiredInst,pid);
 
+#ifdef DEBUG
+   fprintf(stdout, "\n[DEBUG] : in \"%s\" from <%s>\n",__func__,__FILE__);
+	fprintf(stdout, "          Sampling protocol is loaded on pid(%d), starting ...\n",pid);
+#endif
 
-   startProbeMeasure2(&probeLibUnhaltedCycles);
-   startProbeMeasure(&probeLibMSR);
-   startProbeMeasure2(&probeLibRetiredInst);
-
-   fprintf(stderr, "[Sampler : INFO] Sampling protocol is loaded on pid(%d), starting ...\n",pid);
-
-
+   
    // Open output file
    outputFile = fopen("output.csv","w");
    if(outputFile == NULL)
@@ -124,6 +122,11 @@ void capture_sampling_init (int pid)
       exit(1);
    }
    fprintf(outputFile,"Time,Intructions(%s),Unhalted cycles(%s),Energy(%s)\n",probelibs.PROBE_LIB_RETIRED_INST,probelibs.PROBE_LIB_UNHALTED_CYCLES,probelibs.PROBE_LIB_MSR);
+	
+	startProbeMeasure2(&probeLibUnhaltedCycles);
+   startProbeMeasure(&probeLibMSR);
+   startProbeMeasure2(&probeLibRetiredInst);
+
 
    ret = pthread_create (&watcherThread, NULL,watchman, NULL);
    if(ret)
@@ -146,8 +149,11 @@ void capture_sampling_end ()
    closeProbeLib(&probeLibMSR);
 
    fclose(outputFile);
-
-   fprintf(stderr, "[Sampler : INFO] Sampling protocol ended, quiting ...\n");
+#ifdef DEBUG
+	fprintf(stdout, "\n[DEBUG] : in \"%s\" from <%s>\n",__func__,__FILE__);
+   fprintf(stdout, "          Sampling protocol ended, quiting ...\n");
+	fprintf(stdout,"----------------------------------------------\n");
+#endif
 }
 
 

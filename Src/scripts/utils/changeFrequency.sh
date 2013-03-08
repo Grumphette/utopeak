@@ -25,5 +25,5 @@ then
 	exit
 fi
 
-echo $1 | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_setspeed
+echo -n $1 | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_setspeed
 

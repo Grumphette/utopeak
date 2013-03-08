@@ -36,7 +36,9 @@ cp ${OUTPUT_PATH}/${TEST_NAME}/sequencing/sequence.utopik ${TEST_DIR}
 cp ${INI_INSTRUCTION_LIB} ${TEST_DIR}
 cp ${INI_CYCLES_LIB} ${TEST_DIR}
 
-
+echo "--------- Evaluation phase --------"
+echo "  Using : ${TEST_NAME}/sequencing/sequence.utopik"
+echo -n "  Evaluation..." 
 cd ${TEST_DIR}
 if [ "$TYPE" = "SEQ" ] 
 then
@@ -53,10 +55,23 @@ else
 	LD_PRELOAD=${EVAL_LIB} mpirun -n $EXPORTED_NUM_PROC ./${TEST_NAME}
 	mpdallexit 2> /dev/null
 fi
-cd ${HERE}
+echo "OK"
+`cat tmp.csv >> ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv ; rm tmp.csv`
+echo "  Predicted : `head -n 1 ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv` (J)"
+predicted=`head -n 1 ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv`
+echo "  Evaluated : `tail -n 1 ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv` (J)"
+evaluated=`tail -n 1 ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv`
 
+variation=$(echo "scale=2;($evaluated-$predicted)"| bc)
+relativeVariation=$(echo "scale=2;($variation/$evaluated)"| bc)
+percentage=$(echo "scale=2;($relativeVariation*100)"| bc)
+
+echo "  variation : ${percentage} %"
+echo "  result extracted from : ${TEST_NAME}/sequencing/finalResults.csv"
+cd ${HERE}
 
 rm ${TEST_DIR}/sequence.utopik
 rm ${TEST_DIR}/ccyclescounters.ini
 rm ${TEST_DIR}/pfmcounters2.ini
 
+echo "-----------------------------------"

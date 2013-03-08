@@ -33,17 +33,20 @@
 
 int MPI_Init(int *argc, char ***argv)
 {
-   int rc,rank,i;
+   int rc,rank,size;
    rc = PMPI_Init(argc, argv);
    MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+	MPI_Comm_size(MPI_COMM_WORLD,&size);
 	pinCPU(rank);
 
    if(rank == SAMPLING_RANK)
    {
 #ifdef DEBUG
+	 int i;
+	 fprintf(stdout,"\n----------------------------------------------\n");
 	 fprintf(stdout,"[DEBUG] : in hijack_main from <%s>\n",__FILE__);
 	 fprintf(stdout,"          pining map :");
-	 for (i=0;i<rank+1;i++)
+	 for (i=0;i<size;i++)
 	 {
 		 fprintf(stdout,"%d ",i);
 	 }

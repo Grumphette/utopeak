@@ -37,12 +37,15 @@ void getChunckInstruction()
    envNumInst = getenv("UTOPEAK_NUM_INST");
    if(envNumInst == NULL)
    {
-      fprintf(stderr,"[Sequence Eval : ERROR] INSTRUCTION CHUNCK was not specified \n");
+      fprintf(stderr,"[ERROR] UTOPEAK_NUM_INST environment variable was not specified \n");
       exit(1);
    }
    CHUNCK_INST = strtol(envNumInst,NULL,10);
-   fprintf(stderr,"[Sequence Eval : INFO] INSTRUCTION CHUNCK specified to %li \n",CHUNCK_INST);
 
+#ifdef DEBUG
+   fprintf(stdout, "\n[DEBUG] : in \"%s\" from <%s>\n",__func__,__FILE__);
+	fprintf(stdout, "          UTOPEAK_NUM_INST specified to %li \n",CHUNCK_INST);
+#endif
 }
 
 int readSequenceFile(const char* fileName)
@@ -55,7 +58,7 @@ int readSequenceFile(const char* fileName)
    FILE* pFile = fopen(fileName,"r");
    if ( pFile == NULL )
    {
-      fprintf(stderr,"[Sequence Eval : ERROR] Sequence file '%s' failed to open\n",fileName);
+      fprintf(stderr,"[ERROR] Sequence file '%s' failed to open\n",fileName);
       return -1;
    }
    
@@ -65,7 +68,7 @@ int readSequenceFile(const char* fileName)
    sequenceTable = malloc(sizeof(int) * arraySize);
    if ( sequenceTable == NULL )
    {
-      fprintf(stderr,"[Sequence Eval : ERROR] Fail to allocate space for frequencies sequence\n");
+      fprintf(stderr,"[ERROR] Fail to allocate space for frequencies sequence\n");
       fclose(pFile);
       return -3;
    }
@@ -75,7 +78,7 @@ int readSequenceFile(const char* fileName)
       int freq = -1;
       if ( sscanf(buffer,"%d",&freq) != 1 )
       {
-         fprintf(stderr,"[Sequence Eval : ERROR] Fail to get the frequency from line\n'%s'\n",buffer);
+         fprintf(stderr,"[ERROR] Fail to get the frequency from line\n'%s'\n",buffer);
          errorCode = -10;
          break;
       }
@@ -88,7 +91,7 @@ int readSequenceFile(const char* fileName)
          int* pNewArray = realloc(sequenceTable,arraySize*sizeof(int));
          if ( pNewArray == NULL )
          {
-            fprintf(stderr,"[Sequence Eval : ERROR]Fail to increase size of the frequencies sequence\n");
+            fprintf(stderr,"[ERROR] Fail to increase size of the frequencies sequence\n");
             free(sequenceTable);
             sequenceTable = NULL;
             errorCode = -20;
@@ -102,7 +105,7 @@ int readSequenceFile(const char* fileName)
    // Checks why we stop
    if (!feof(pFile))
    {
-      fprintf(stderr,"[Sequence Eval : ERROR] Fail to read file\n");
+      fprintf(stderr,"[ERROR] Fail to read file\n");
       errorCode = -2;
    }
    
@@ -164,11 +167,14 @@ void capture_sampling_init (int pid)
    setGovernor("userspace");
    initCPUControler(&cpuControler);
 
-   currentFreq = sequenceTable[0];
+#ifdef DEBUG
+   fprintf(stdout, "\n[DEBUG] : in \"%s\" from <%s>\n",__func__,__FILE__);
+	fprintf(stdout, "          Sampling protocol is loaded on pid(%d), starting ...\n",pid);
+#endif
+	
+	currentFreq = sequenceTable[0];
    changeCPUFreq(&cpuControler,currentFreq);
 
-
-   fprintf(stderr, "[Sequence Eval : INFO] Utopeak 3 is loaded on pid(%d), starting ...\n",pid);
 
    startProbeMeasure2(&probeLibPFM);
    startProbeMeasure(&probeLibMSR);
@@ -194,7 +200,21 @@ void capture_sampling_end ()
    
    free(sequenceTable);
 
-   fprintf(stderr, "[Sequence Eval : INFO] Sampling protocol ended, quiting ...\n");
-   fprintf(stderr,"[Sequence Eval : RESULTS] energy : %f\n",nbTotalMSR);
+#ifdef DEBUG
+	fprintf(stdout, "\n[DEBUG] : in \"%s\" from <%s>\n",__func__,__FILE__);
+   fprintf(stdout, "          Sampling protocol ended, quiting ...\n");
+	fprintf(stdout,"----------------------------------------------\n");
+#endif
+{
+	FILE *energyOutput = NULL;
+	energyOutput = fopen("tmp.csv","a");
+	if(energyOutput == NULL)
+	{
+		perror("fopen");
+		exit(1);
+	}
+   fprintf(energyOutput,"%f",nbTotalMSR);
+	fclose(energyOutput);
+}	
 }
 

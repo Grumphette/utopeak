@@ -21,6 +21,13 @@
 #include <stdio.h>
 #include <dlfcn.h>
 #include <assert.h>
+#include <string.h>
+#include <stdlib.h>
+
+#ifdef DEBUG
+	#include <libgen.h>
+#endif
+
 
 int loadProbeLib(const char* pLibFileName, ProbeLib* pProbeLib)
 {
@@ -28,17 +35,19 @@ int loadProbeLib(const char* pLibFileName, ProbeLib* pProbeLib)
    
    assert(pProbeLib);
    
+	pProbeLib->pLibName = strdup(pLibFileName);
+	
    pProbeLib->pLibHandle = dlopen(pLibFileName,RTLD_LAZY);
    if ( pProbeLib->pLibHandle == NULL )
    {
-      fprintf(stderr,"[sampler : ERROR] %s\n",dlerror());
+      fprintf(stderr,"[ERROR] %s\n",dlerror());
       return -1;
    }
    
    pProbeLib->evaluationInit =(evalInit) dlsym(pProbeLib->pLibHandle,"evaluationInit");
    if ( pProbeLib->evaluationInit == NULL )
    {
-      fprintf(stderr,"[ProbeLibLoader : ERROR] Fail to load 'evaluationInit'\n");
+      fprintf(stderr,"[ERROR] Fail to load 'evaluationInit'\n");
       loadingFailure++;
       // return;
    }
@@ -46,7 +55,7 @@ int loadProbeLib(const char* pLibFileName, ProbeLib* pProbeLib)
    pProbeLib->evaluationStart =(evalGet) dlsym(pProbeLib->pLibHandle,"evaluationStart");
    if ( pProbeLib->evaluationStart == NULL )
    {
-      fprintf(stderr,"[ProbeLibLoader : ERROR] Fail to load 'evaluationStart'\n");
+      fprintf(stderr,"[ERROR] Fail to load 'evaluationStart'\n");
       loadingFailure++;
       // return;
    }
@@ -54,7 +63,7 @@ int loadProbeLib(const char* pLibFileName, ProbeLib* pProbeLib)
    pProbeLib->evaluationStop = (evalGet) dlsym(pProbeLib->pLibHandle,"evaluationStop");
    if ( pProbeLib->evaluationStop == NULL )
    {
-      fprintf(stderr,"[ProbeLibLoader : ERROR] Fail to load 'evaluationStop'\n");
+      fprintf(stderr,"[ERROR] Fail to load 'evaluationStop'\n");
       loadingFailure++;
       // return;
    }
@@ -62,16 +71,19 @@ int loadProbeLib(const char* pLibFileName, ProbeLib* pProbeLib)
    pProbeLib->evaluationClose = (evalClose) dlsym(pProbeLib->pLibHandle,"evaluationClose");
    if ( pProbeLib->evaluationClose == NULL )
    {
-      fprintf(stderr,"[ProbeLibLoader : ERROR] Fail to load 'evaluationClose'\n");
+      fprintf(stderr,"[ERROR] Fail to load 'evaluationClose'\n");
       loadingFailure++;
       // return;
    }
 
+#ifdef DEBUG
    if ( loadingFailure == 0 )
    {
-      fprintf(stderr,"[sampler : INFO] '%s' successfully loaded\n",pLibFileName);
+		fprintf(stdout,"\n[DEBUG] : in \"%s\" from <%s>\n",__func__,__FILE__);
+      fprintf(stdout,"          '%s' successfully loaded\n",basename(pProbeLib->pLibName));
    }
-   
+#endif
+  
    // Now, we just start the probe
    if ( pProbeLib->evaluationInit )
    {
@@ -92,8 +104,11 @@ void closeProbeLib(ProbeLib* pProbeLib)
    pProbeLib->evaluationClose(pProbeLib->pProbeHandle);
    
    dlclose(pProbeLib->pLibHandle); // Should return zero
-   
-   fprintf(stderr,"[sampler : INFO] ProbeLib successfully closed\n");
+#ifdef DEBUG
+		fprintf(stdout,"\n[DEBUG] : in \"%s\" from <%s>\n",__func__,__FILE__);
+      fprintf(stdout,"          '%s' successfully closed\n",basename(pProbeLib->pLibName));
+#endif
+	free(pProbeLib->pLibName);
 }
 
 void startProbeMeasure(ProbeLib* pProbeLib)

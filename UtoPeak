@@ -23,7 +23,7 @@ use strict;
 use Getopt::Long;
 use Pod::Usage;
 use Env;
-use Env qw(UTO_ROOT_DIR UTO_SRC_ROOT_DIR LOG_FOLDER INSTRUCTION_LIB CYCLES_LIB ENERGY_LIB);
+use Env qw(UTO_ROOT_DIR UTO_SRC_ROOT_DIR LOG_FOLDER INSTRUCTION_LIB CYCLES_LIB ENERGY_LIB UTILS_SCRIPTS);
 use Cwd 'abs_path';
 
 my $help = '';
@@ -123,7 +123,7 @@ sub getoptParsing
 
 sub build
 {
-	print "Compiling UtoPeak"; 
+	print "\nCompiling UtoPeak"; 
 	my $cible='';
 	if($debug)
 	{
@@ -151,8 +151,7 @@ sub build
 
 sub profiling
 {
-	print "Profiling ...\n";
-	system("${UTO_SRC_ROOT_DIR}/scripts/Sampling/sample.sh $fullPathBench $fullOutputPath $apptype");
+	system("${UTO_SRC_ROOT_DIR}/scripts/Sampling/sample.sh $fullPathBench $fullOutputPath $apptype $debug");
 	if( $? != 0 )
 	{
 		print "ERROR\n";
@@ -162,7 +161,7 @@ sub profiling
 
 sub sequencingAndEval
 {	
-	system("${UTO_SRC_ROOT_DIR}/scripts/Evaluation/eval.sh $fullPathBench $fullOutputPath $apptype");
+	system("${UTO_SRC_ROOT_DIR}/scripts/Evaluation/eval.sh $fullPathBench $fullOutputPath $apptype $debug");
 }
 
 __END__

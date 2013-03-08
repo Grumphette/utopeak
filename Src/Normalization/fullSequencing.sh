@@ -18,12 +18,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-
+echo ""
+echo "------ Normalization process ------"
 if [ $# -eq 1 ]
 then
    if [ -d $1 ]
    then
-      
+
+		echo -n "  Extracting ..."      
       ./extractor.py -f "0 1 2 3" $1/*0.csv
       mkdir -p $1/sequencing/
       mv $1/*_extract.csv $1/sequencing/
@@ -45,9 +47,13 @@ then
          
          mv ${file}_tmp $file
       done
+		echo "OK"
+		echo -n "  Defining instruction sample size ..."
 		instSampleSize=`./findInstructionBlock.pl $1`
+		echo "OK"
       ./sequencer.sh $instSampleSize $1/sequencing/
       export UTOPEAK_NUM_INST=${instSampleSize}
    fi
 fi
-
+echo "-----------------------------------"
+echo ""

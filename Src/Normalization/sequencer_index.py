@@ -30,6 +30,8 @@ if len(sys.argv) < 2:
 
 # Go through all the list, without taking the program name and the output
 inFilesData = {}
+
+
 for fileName in sys.argv[1:]:
    if not os.path.exists(fileName):
       print 'Fail to open \'{0}\''.format(fileName)
@@ -44,8 +46,6 @@ for fileName in sys.argv[1:]:
          break
       except:
          continue
-         
-   print "Freq found : {0}".format(freq)
    
    inFilesData[freq]= {}
    
@@ -70,7 +70,7 @@ for data in inFilesData.values():
 dirName = os.path.dirname(fileName)
 outputFileName = dirName + "/sequence.utopik"
 outFile = open(outputFileName,"w")
-print "Output : " + outputFileName
+#print "Output : " + outputFileName
 
 energyFileName = dirName + "/energy.utopik"
 energyFile = open(energyFileName,"w")
@@ -128,6 +128,10 @@ ipcFile.close()
 cycleFile.close()
 timeFile.close()
 
-print "Total energy {0}".format(totalEnergy)
-print "Total cycles {0}".format(totalCycles)
+energyfilePath = dirName + "/finalResults.csv"
+outputEnergyFile = open(energyfilePath,"w")
+outputEnergyFile.write(str(totalEnergy)+"\n")
+outputEnergyFile.close()
+#print "Total energy {0}".format(totalEnergy)
+#print "Total cycles {0}".format(totalCycles)
 

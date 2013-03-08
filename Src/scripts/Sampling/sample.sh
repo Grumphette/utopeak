@@ -22,33 +22,55 @@
 TEST=$1
 OUTPUT=$2
 TYPE=$3
+DEBUG=$4
 
 TESTNAME=`basename $TEST`
 
+echo ""
+echo "--------- Sampling phase ----------"
+
 # Force the computer to have the lowest frequency
+echo -n "  Setting governor : "
 $UTILS_SCRIPTS/changeGovernor.sh userspace
 
 mkdir -p $OUTPUT/$TESTNAME
-
+i=0;
 for freq in `$UTILS_SCRIPTS/listFrequencies.sh`
 do
-	echo -n "Using frequency : "
+	let i++
+	echo -n "  sampling [ ${i}/`$UTILS_SCRIPTS/nbFreq.sh` ] current : "
 	$UTILS_SCRIPTS/changeFrequency.sh $freq
 
+	trap "echo \" ... SIGINT trapped, quitting with status 1\";  rm -f output.csv ; exit 1" SIGINT
+	trap "echo \" ... SIGTERM trapped, quitting with status 1\"; rm -f output.csv ; exit 1" SIGTERM
+	trap "echo \" ... SIGKILL trapped, quitting with status 1\"; rm -f output.csv ; exit 1" SIGKILL
 
 	if [ "$TYPE" = "SEQ" ]
 	then
-		LD_PRELOAD=$PROFILING_LIB $TEST
-
+		if [ "$DEBUG" = "" ]
+		then
+			LD_PRELOAD=$PROFILING_LIB $TEST > /dev/null 2> /dev/null
+		else
+			LD_PRELOAD=$PROFILING_LIB $TEST
+		fi
 	elif [ "$TYPE" = "OMP" ]
 	then
 		source $CONFIG_FILES/openmp.cfg
-		LD_PRELOAD=$PROFILING_LIB $TEST
-
+		if [ "$DEBUG" = "" ]
+		then
+			LD_PRELOAD=$PROFILING_LIB $TEST > /dev/null 2> /dev/null
+		else
+			LD_PRELOAD=$PROFILING_LIB $TEST
+		fi
 	else
 		source $CONFIG_FILES/mpi.cfg
 		mpdboot
-		LD_PRELOAD=$PROFILING_LIB mpirun -n $EXPORTED_NUM_PROC $TEST
+		if [ "$DEBUG" = "" ]
+		then
+			LD_PRELOAD=$PROFILING_LIB mpirun -n $EXPORTED_NUM_PROC $TEST > /dev/null 2> /dev/null
+		else
+			LD_PRELOAD=$PROFILING_LIB mpirun -n $EXPORTED_NUM_PROC $TEST
+		fi
 		mpdallexit 2> /dev/null
 	fi
 	
@@ -56,7 +78,9 @@ do
 	then
 		exit 1
 	fi
+	echo ""
 	mv output.csv $OUTPUT/$TESTNAME/${TESTNAME}_${freq}.csv
 
 done
 
+echo "-----------------------------------"
