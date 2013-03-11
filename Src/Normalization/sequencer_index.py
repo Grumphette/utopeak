@@ -99,7 +99,7 @@ for i in range(size):
    keys = sorted(inFilesData.keys())
    for freq in keys:
       if i < len(inFilesData[freq]):
-         inScore = float(inFilesData[freq][i][0])
+         inScore = float(inFilesData[freq][i][2])
          
          # Test to get the lowest score
          if score > inScore:

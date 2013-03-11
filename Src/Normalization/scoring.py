@@ -58,7 +58,7 @@ for fileName in sys.argv[1:]:
          cycles = float(valuesStr[1])
          energy = float(valuesStr[2])
          ipc = float(valuesStr[3])
-	 time = float(valuesStr[4])
+	 		time = float(valuesStr[4])
 
          # Here, I have to put a wonderful calculation to have a score from the values read
          #score = (1000000000/cycles) / energy

@@ -29,11 +29,11 @@ then
 		echo -n "  Normalization ..."
       ./normalise.py $1 $2/*_stabilized.csv
 		echo "OK"
-		echo -n "  Scoring ..."
-      ./scoring.py $2/*_normalised.csv
-		echo "OK"
+		#echo -n "  Scoring ..."
+      #./scoring.py $2/*_normalised.csv
+		#echo "OK"
 		echo -n "  Frequency sequence building ..."
-      ./sequencer_index.py $2/*_normalised_score.csv
+      ./sequencer_index.py $2/*_normalised.csv
 		echo "OK"
 #      rm $1/*_normalised.csv
 #      rm $1/*_normalised_score.csv

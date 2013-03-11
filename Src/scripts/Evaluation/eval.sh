@@ -56,18 +56,28 @@ else
 	mpdallexit 2> /dev/null
 fi
 echo "OK"
+
 `cat tmp.csv >> ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv ; rm tmp.csv`
 echo "  Predicted : `head -n 1 ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv` (J)"
-predicted=`head -n 1 ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv`
+echo "  Predicted : `head -n 1 ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv` (J)" >> tmp.csv
+
+
 echo "  Evaluated : `tail -n 1 ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv` (J)"
+echo "  Evaluated : `tail -n 1 ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv` (J)" >> tmp.csv
+
+# difference between evaluation and prediction computation
+predicted=`head -n 1 ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv`
 evaluated=`tail -n 1 ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv`
+variation=$(echo "scale=3;($evaluated-$predicted)"| bc)
+relativeVariation=$(echo "scale=3;($variation/$evaluated)"| bc)
+percentage=$(echo "scale=5;($relativeVariation*100)"| bc | xargs printf "%0.2f")
 
-variation=$(echo "scale=2;($evaluated-$predicted)"| bc)
-relativeVariation=$(echo "scale=2;($variation/$evaluated)"| bc)
-percentage=$(echo "scale=2;($relativeVariation*100)"| bc)
+echo "  Variation : ${percentage} %"
+echo "  Variation : ${percentage} %" >> tmp.csv
 
-echo "  variation : ${percentage} %"
-echo "  result extracted from : ${TEST_NAME}/sequencing/finalResults.csv"
+#updating the finalResults.csv with the formated output
+`cat tmp.csv > ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv; rm tmp.csv `
+echo "  Result extracted from : ${TEST_NAME}/sequencing/finalResults.csv"
 cd ${HERE}
 
 rm ${TEST_DIR}/sequence.utopik

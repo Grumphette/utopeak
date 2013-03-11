@@ -24,23 +24,21 @@
 # To do this we have to interpolate values between the two read values
 import sys, os
 
-# Instruction step
-#INST_STEP = 568000000
 
 if len(sys.argv) < 3:
    print './normalise.py INPUTS'
    sys.exit()
 
 INST_STEP = int(sys.argv[1])
-#print 'INST_STEP : {0}'.format(INST_STEP)
+numberOfFiles = len(sys.argv[2:]);
+numberOfFileProcessed = 0
 
 # Go through all the list, without taking the program name and the output
 for fileName in sys.argv[2:]:
    if not os.path.exists(fileName):
       print 'Fail to open \'{0}\''.format(fileName)
       continue
-      
-   # Get the name for output file
+     # Get the name for output file
    shortFileName, fileExtension = os.path.splitext(fileName)
    outputFileName = shortFileName + "_normalised" + fileExtension
    #print 'Output file : {0}'.format(outputFileName)
@@ -64,7 +62,7 @@ for fileName in sys.argv[2:]:
          instructions = int(valuesStr[0])
          cycles = int(valuesStr[1])
          energy = float(valuesStr[2])
-	 time = float(valuesStr[3])
+         time = float(valuesStr[3])
          values.append((instructions,cycles,energy,time))
       except ValueError:
          print "Input file has invalid data"
@@ -102,7 +100,7 @@ for fileName in sys.argv[2:]:
          quot = intStep / float(values[0][0])
          cycles = values[0][1] * quot;
          energy = values[0][2] * quot;
-	 time = values[0][3] * quot;
+         time = values[0][3] * quot;
          
          results.append((intStep,cycles,energy,time))
          
@@ -127,7 +125,7 @@ for fileName in sys.argv[2:]:
       else:
          # We are outside, so we are just printing the last values
          results.append((intStep,values[i][1],values[i][2],values[i][3]))
-         
+   
    # Adds very last instructions number
    if i < valuesLenght:
       lastIndex = len(values)-1
@@ -137,6 +135,7 @@ for fileName in sys.argv[2:]:
    for i in range(1,len(results)):
       outFile.write("{0},{1},{2},{3},{4}\n".format(results[i][0],results[i][1]-results[i-1][1],results[i][2]-results[i-1][2],INST_STEP/(results[i][1]-results[i-1][1]),results[i][3]-results[i-1][3]))
       
-         
    outFile.close()
-
+   
+   numberOfFileProcessed = numberOfFileProcessed+1 
+   sys.stdout.write("{0}%..".format(int(100*(numberOfFileProcessed/float(numberOfFiles)))))

@@ -38,7 +38,7 @@ i=0;
 for freq in `$UTILS_SCRIPTS/listFrequencies.sh`
 do
 	let i++
-	echo -n "  sampling [ ${i}/`$UTILS_SCRIPTS/nbFreq.sh` ] current : "
+	echo -n "  Sampling [ ${i}/`$UTILS_SCRIPTS/nbFreq.sh` ] Current Frequency : "
 	$UTILS_SCRIPTS/changeFrequency.sh $freq
 
 	trap "echo \" ... SIGINT trapped, quitting with status 1\";  rm -f output.csv ; exit 1" SIGINT

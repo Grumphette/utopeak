@@ -25,12 +25,12 @@ then
    if [ -d $1 ]
    then
 
-		echo -n "  Extracting ..."      
-      ./extractor.py -f "0 1 2 3" $1/*0.csv
+		#echo -n "  Extracting ..."      
+      #./extractor.py -f "0 1 2 3" $1/*0.csv
       mkdir -p $1/sequencing/
-      mv $1/*_extract.csv $1/sequencing/
+      #`cp $1/*.csv $1/sequencing/`
       
-      for file in `ls $1/sequencing/*`
+      for file in `ls --hide=sequencing $1/`
       do
          i=0
          while read line
@@ -38,16 +38,15 @@ then
             # Let's forget the first line
             if [ $i -eq 0 ]
             then
-               echo $line > ${file}_tmp
+               echo $line > ${1}/${file}_tmp
             else
-               echo $line | sed -e "s/.000000,/,/ig" >> ${file}_tmp
+               echo $line | sed -e "s/.000000,/,/ig" >> ${1}/${file}_tmp
             fi
             i=`expr $i + 1`
-         done < $file
-         
-         mv ${file}_tmp $file
+         done < ${1}/$file
+         mv ${1}/${file}_tmp $1/sequencing/`basename $file`
       done
-		echo "OK"
+		#echo "OK"
 		echo -n "  Defining instruction sample size ..."
 		instSampleSize=`./findInstructionBlock.pl $1`
 		echo "OK"

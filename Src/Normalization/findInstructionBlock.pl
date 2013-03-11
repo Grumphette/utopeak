@@ -39,7 +39,7 @@ my $fmin=$freqs[$#freqs];
 # find the mini freq file in the result folder
 my $minFreqFiles = `ls -r $folder | grep $fmin`;
 my @minFreqFile = split("\n",$minFreqFiles);
-#in case of several match, the correct frequency file the first file given by UtoPeak
+#in case of several match, the correct frequency file is the first file given by UtoPeak
 chomp @minFreqFile[0];
 
 #open the min freq file and find the lowest instruction step within all the measured samples
