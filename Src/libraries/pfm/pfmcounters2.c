@@ -319,8 +319,8 @@ extern void *evaluationInit (int pid)
       arg.size = sizeof(pfm_perf_encode_arg_t);
 
       // encode the counter
-      tmp = pfm_get_os_event_encoding (ctx->counterNames [i], PFM_PLM0 | PFM_PLM3,
-                                       PFM_OS_PERF_EVENT_EXT, &arg); // PFM_PLM0 | PFM_PLM3
+      tmp = pfm_get_os_event_encoding (ctx->counterNames [i],PFM_PLM3,
+                                       PFM_OS_PERF_EVENT_EXT, &arg);
       if (tmp != PFM_SUCCESS)
       {
          fprintf(stderr, "Failed to get counter %s\n", ctx->counterNames[i]);
