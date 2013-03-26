@@ -19,7 +19,6 @@
 #
 
 
-
 UtoPeak_Root=`pwd`
 UtoPeakSrc_Root=${UtoPeak_Root}/Src/
 
@@ -36,6 +35,6 @@ export PROFILING_LIB=${UtoPeakSrc_Root}/libUtoPeak_instru.so
 export EVAL_LIB=${UtoPeakSrc_Root}/libUtoPeak_eval.so
 export LOG_FOLDER=${UtoPeak_Root}/log/
 export APPLICATION_TEST_FOLDER=${UtoPeak_Root}/test_application/
-export UTO_ROOT_DIR=${UtoPeak_Root}
 export UTO_SRC_ROOT_DIR=${UtoPeakSrc_Root}
+export UTO_ROOT_DIR=${UtoPeak_Root}
 

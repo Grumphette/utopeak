@@ -1,17 +1,64 @@
 UtoPeak - Automatic Estimation of DVFS Potential
 
-To install UtoPeak on your machine run the "install.sh" script, it will
-install all the needed dependencies and libraries.
+============== HOW TO INSTALL ? ================
 
-NOTE : UtoPeak only works on SandyBridge for now. (dependencies : msr-tools)
-NOTE : UtoPeak default option for mpi application are design to work with Intel MPI, edit utopeak/config/mpi.cfg to get the correct MPI options
+To install UtoPeak on your machine run the 
+"./install.sh" script, it will install all 
+the needed dependencies and libraries. 
+It will also check if the "cpufreq" module
+and files are load and presnet on your sytem.
+The same check is done for "msr" module and
+files.
 
-To run UtoPeak on your system :
-./UtoPeak --type=<SEQ|MPI|OMP> --output=<output path> <path to binary>
-but
-./UtoPeak --help will explain how to chose the different options.
+NOTE 1 : For the different checks you will need
+super user rights.
 
-NOTE : This version of UtoPeak is currently under a cleaning process, so better output will comes very soon.
+NOTE 2 : As UtoPeak uses "msr" to access 
+energy probes, it will only works on 
+Intel SandyBridge and IvyBridge.
+
+=============== HOW TO USE IT ? ================
+
+To run UtoPeak, use the "./UtoPeak" script,
+you can use "UtoPeak --help" to get the 
+usage and information about the different
+needed parameters. 
+
+Before running UtoPeak you have to source the
+"shrc" file from "config" folder in $UTO_ROO_DIR
+in order to get all the needed "env" variables.
+Make ure that the file sourcing is made in the
+$UTO_ROOT_DIR.
+
+The "config" folder contains additionnal configuration
+files in order to set different parametes for MPI
+and OpenMP applications, such as the number of
+wanted threads, their pinning on the system...
+
+To configure such parameter for MPI-application
+edit $UTO_ROOT_DIR/config/mpi.cfg
+
+To configure such parameter for OpenMP-application
+edit $UTO_ROOT_DIR/config/openmp.cfg
+
+NOTE 1 : Both files contains default configuration
+to get started, it will uses 4 cores on your
+system. 
+
+NOTE 2 : By default, the options in mpi.cfg
+are Intel MPI compliant
+
+============ HOW TO UNINSTALL IT ? ==============
+
+To uninstall UtoPeak run "./uninstall" script
+it will only removes installed dependencies,
+
+Any result folder present in $UtoPeak_Root
+will not be erased
+
+Once uninstalled, you are then free to remove 
+$UTO_ROOT_DIR.
+
 
 Licence :
 	GPLv3

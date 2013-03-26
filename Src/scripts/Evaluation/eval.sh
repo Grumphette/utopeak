@@ -25,6 +25,7 @@ TEST_DIR=`dirname ${TEST}`
 
 OUTPUT_PATH=$2
 TYPE=$3
+DEBUG=$4
 
 HERE=`pwd`
 
@@ -38,26 +39,49 @@ cp ${INI_CYCLES_LIB} ${TEST_DIR}
 
 echo "--------- Evaluation phase --------"
 echo "  Using : ${TEST_NAME}/sequencing/sequence.utopik"
-echo -n "  Evaluation..." 
+echo -n "  Evaluation ..." 
 cd ${TEST_DIR}
-if [ "$TYPE" = "SEQ" ] 
-then
-	LD_PRELOAD=${EVAL_LIB} ./${TEST_NAME}
+for i in `seq 1 1 5`
+do
+   if [ "$TYPE" = "SEQ" ] 
+   then
+      if [ "$DEBUG" = "" ]
+      then
+         LD_PRELOAD=${EVAL_LIB} ./${TEST_NAME} > /dev/null 2> /dev/null
+      else
+         LD_PRELOAD=${EVAL_LIB} ./${TEST_NAME}
+      fi
+   elif [ "$TYPE" = "OMP" ]
+   then
+      source $CONFIG_FILES/openmp.cfg
+      if [ "$DEBUG" = "" ]
+      then
+         LD_PRELOAD=${EVAL_LIB} ./${TEST_NAME} > /dev/null 2> /dev/null
+      else
+         LD_PRELOAD=${EVAL_LIB} ./${TEST_NAME}
+      fi
+   else
+      source $CONFIG_FILES/mpi.cfg 
+      mpdboot
+      if [ "$DEBUG" = "" ]
+      then
+         LD_PRELOAD=${EVAL_LIB} mpirun -n $EXPORTED_NUM_PROC ./${TEST_NAME} > /dev/null 2> /dev/null
+      else
+         LD_PRELOAD=${EVAL_LIB} mpirun -n $EXPORTED_NUM_PROC ./${TEST_NAME}
+      fi
+      mpdallexit 2> /dev/null
+   fi
+   
+   progress=$(echo "scale=1;($i/5)" | bc)
+   progressPercent=$(echo "$progress*100" | bc)
+   echo -n "${progressPercent}%.."
 
-elif [ "$TYPE" = "OMP" ]
-then
-	source $CONFIG_FILES/openmp.cfg
-	LD_PRELOAD=${EVAL_LIB} ./${TEST_NAME}
-
-else
-	source $CONFIG_FILES/mpi.cfg 
-	mpdboot
-	LD_PRELOAD=${EVAL_LIB} mpirun -n $EXPORTED_NUM_PROC ./${TEST_NAME}
-	mpdallexit 2> /dev/null
-fi
+done
 echo "OK"
 
-`cat tmp.csv >> ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv ; rm tmp.csv`
+
+
+`${UTILS_SCRIPTS}/computeEvaluated.pl tmp.csv >> ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv; rm tmp.csv`
 echo "  Predicted : `head -n 1 ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv` (J)"
 echo "  Predicted : `head -n 1 ${OUTPUT_PATH}/${TEST_NAME}/sequencing/finalResults.csv` (J)" >> tmp.csv
 

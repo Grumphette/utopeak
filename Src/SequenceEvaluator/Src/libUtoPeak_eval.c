@@ -213,7 +213,7 @@ void capture_sampling_end ()
 		perror("fopen");
 		exit(1);
 	}
-   fprintf(energyOutput,"%f",nbTotalMSR);
+   fprintf(energyOutput,"%f\n",nbTotalMSR);
 	fclose(energyOutput);
 }	
 }
