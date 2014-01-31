@@ -29,6 +29,10 @@ use IO::Handle;
 use Env;
 use Env qw(UTO_ROOT_DIR UTO_SRC_ROOT_DIR LOG_FOLDER UTILS_SCRIPTS);
 
+my $nointeract = '';
+
+my $getOptErr = GetOptions ('no-interactiv!' => \$nointeract );
+
 
 main();
 
@@ -40,8 +44,11 @@ sub main
 	install_libpfm();
 	install_libenergy();
 	install_test();
-	check_cpufreq_access();
-	check_msr_access();
+   if(!$nointeract)
+   {
+	   check_cpufreq_access();
+	   check_msr_access();
+   }
 	print "DONE\n";
 }
 
