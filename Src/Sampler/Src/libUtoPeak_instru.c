@@ -86,7 +86,7 @@ void *watchman(void *data)
    {
       // Wait some time
       timeout.tv_sec = 0;
-      timeout.tv_usec = 300 * 1000;
+      timeout.tv_usec = 100 * 1000;
       ellapsedTime += timeout.tv_sec + timeout.tv_usec/(1000 * 1000.0f);   // Can be done after, since the timeout struct is modified by the select
       ret = select(0, NULL, NULL, NULL, &timeout);
  

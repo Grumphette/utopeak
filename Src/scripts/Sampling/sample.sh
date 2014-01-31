@@ -24,7 +24,8 @@ OUTPUT=$2
 TYPE=$3
 DEBUG=$4
 
-TESTNAME=`basename $TEST`
+TESTNAMETMP=`echo $TEST | cut -d" " -f1`
+TESTNAME=`basename $TESTNAMETMP`
 
 echo ""
 echo "--------- Sampling phase ----------"
@@ -32,6 +33,10 @@ echo "--------- Sampling phase ----------"
 # Force the computer to have the lowest frequency
 echo -n "  Setting governor : "
 $UTILS_SCRIPTS/changeGovernor.sh userspace
+
+OUTPUTFOLDER=$OUTPUT/$TESTNAME
+
+echo "  Creating the output folder : $OUTPUTFOLDER "
 
 mkdir -p $OUTPUT/$TESTNAME
 i=0;

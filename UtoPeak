@@ -33,9 +33,12 @@ my $ARGC = $#ARGV+1;
 my $fullOutputPath='';
 my $fullPathBench='';
 my $debug='';
+my $appparam="";
+my $appNeedParam=0;
 
 my $getOptErr = GetOptions ('help!' => \$help,
 			 'type=s' => \$apptype,
+			 'execparam=s' => \$appparam,
 			 'output=s' => \$outputPath,
 			 'debug!' => \$debug
 			);
@@ -54,7 +57,7 @@ sub entryPoint
 
 sub optionParsing
 {
-	if($ARGC <3 or $ARGC >4)
+	if($ARGC <3 or $ARGC >5)
 	{
 		pod2usage(1);
 	}
@@ -110,6 +113,10 @@ sub getoptParsing
 	{
 		pod2usage(1);
 		exit 2;
+	}
+	if($appparam ne "")
+	{
+		$appNeedParam=1;
 	}
 	if( not(-d $outputPath) and $outputPath ne "")
 	{
@@ -279,17 +286,42 @@ sub build
 
 sub profiling
 {
-	system("${UTO_SRC_ROOT_DIR}/scripts/Sampling/sample.sh $fullPathBench $fullOutputPath $apptype $debug");
+	my $fullPathBenchTmp;
+	if($appNeedParam eq 1)
+	{
+		$fullPathBenchTmp = $fullPathBench." ".$appparam;
+	}
+	else
+	{
+		$fullPathBenchTmp = $fullPathBench;
+	}
+	system("${UTO_SRC_ROOT_DIR}/scripts/Sampling/sample.sh \"$fullPathBenchTmp\" $fullOutputPath $apptype $debug");
 	if( $? != 0 )
 	{
 		print "ERROR\n";
 		exit 1;	
 	}
+	
 }
 
 sub sequencingAndEval
 {	
-	system("${UTO_SRC_ROOT_DIR}/scripts/Evaluation/eval.sh $fullPathBench $fullOutputPath $apptype $debug");
+	my $fullPathBenchTmp;
+	if($appNeedParam eq 1)
+	{
+		$fullPathBenchTmp = $fullPathBench." ".$appparam;
+	}
+	else
+	{
+		$fullPathBenchTmp = $fullPathBench;
+	}
+	system("${UTO_SRC_ROOT_DIR}/scripts/Evaluation/eval.sh \"$fullPathBenchTmp\" $fullOutputPath $apptype $debug");
+	
+	if( $? != 0 )
+	{
+		print "ERROR\n";
+		exit 1;	
+	}
 }
 
 __END__

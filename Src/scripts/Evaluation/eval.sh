@@ -20,8 +20,13 @@
 
 
 TEST=$1
-TEST_NAME=`basename ${TEST}`
-TEST_DIR=`dirname ${TEST}`
+
+TESTTMP=`echo $TEST | cut -d" " -f1`
+
+TEST_NAME=`basename ${TESTTMP}`
+TEST_TO_RUN=$TEST
+
+TEST_DIR=`dirname ${TESTTMP}`
 
 OUTPUT_PATH=$2
 TYPE=$3
@@ -47,27 +52,27 @@ do
    then
       if [ "$DEBUG" = "" ]
       then
-         LD_PRELOAD=${EVAL_LIB} ./${TEST_NAME} > /dev/null 2> /dev/null
+         LD_PRELOAD=${EVAL_LIB} ${TEST_TO_RUN} > /dev/null 2> /dev/null
       else
-         LD_PRELOAD=${EVAL_LIB} ./${TEST_NAME}
+         LD_PRELOAD=${EVAL_LIB} ${TEST_TO_RUN}
       fi
    elif [ "$TYPE" = "OMP" ]
    then
       source $CONFIG_FILES/openmp.cfg
       if [ "$DEBUG" = "" ]
       then
-         LD_PRELOAD=${EVAL_LIB} ./${TEST_NAME} > /dev/null 2> /dev/null
+         LD_PRELOAD=${EVAL_LIB} ${TEST_TO_RUN} > /dev/null 2> /dev/null
       else
-         LD_PRELOAD=${EVAL_LIB} ./${TEST_NAME}
+         LD_PRELOAD=${EVAL_LIB} ${TEST_TO_RUN}
       fi
    else
       source $CONFIG_FILES/mpi.cfg 
       mpdboot
       if [ "$DEBUG" = "" ]
       then
-         LD_PRELOAD=${EVAL_LIB} mpirun -n $EXPORTED_NUM_PROC ./${TEST_NAME} > /dev/null 2> /dev/null
+         LD_PRELOAD=${EVAL_LIB} mpirun -n $EXPORTED_NUM_PROC ${TEST_TO_RUN} > /dev/null 2> /dev/null
       else
-         LD_PRELOAD=${EVAL_LIB} mpirun -n $EXPORTED_NUM_PROC ./${TEST_NAME}
+         LD_PRELOAD=${EVAL_LIB} mpirun -n $EXPORTED_NUM_PROC ${TEST_TO_RUN}
       fi
       mpdallexit 2> /dev/null
    fi
