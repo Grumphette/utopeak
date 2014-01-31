@@ -38,9 +38,10 @@ cd ${UTO_SRC_ROOT_DIR}/Normalization
 source ./fullSequencing.sh ${OUTPUT_PATH}/${TEST_NAME}
 cd ${HERE}
 
-cp ${OUTPUT_PATH}/${TEST_NAME}/sequencing/sequence.utopik ${TEST_DIR}
-cp ${INI_INSTRUCTION_LIB} ${TEST_DIR}
-cp ${INI_CYCLES_LIB} ${TEST_DIR}
+export SEQUTO_PATH=${OUTPUT_PATH}/${TEST_NAME}/sequencing/sequence.utopik 
+#cp ${OUTPUT_PATH}/${TEST_NAME}/sequencing/sequence.utopik ${TEST_DIR}
+#cp ${INI_INSTRUCTION_LIB} ${TEST_DIR}
+#cp ${INI_CYCLES_LIB} ${TEST_DIR}
 
 echo "--------- Evaluation phase --------"
 echo "  Using : ${TEST_NAME}/sequencing/sequence.utopik"
@@ -109,8 +110,8 @@ echo "  Variation : ${percentage} %" >> tmp.csv
 echo "  Result extracted from : ${TEST_NAME}/sequencing/finalResults.csv"
 cd ${HERE}
 
-rm ${TEST_DIR}/sequence.utopik
-rm ${TEST_DIR}/ccyclescounters.ini
-rm ${TEST_DIR}/pfmcounters2.ini
+#rm ${TEST_DIR}/sequence.utopik
+#rm ${TEST_DIR}/ccyclescounters.ini
+#rm ${TEST_DIR}/pfmcounters2.ini
 
 echo "-----------------------------------"

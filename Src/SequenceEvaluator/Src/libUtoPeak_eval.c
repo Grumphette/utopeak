@@ -48,7 +48,7 @@ void getChunckInstruction()
 #endif
 }
 
-int readSequenceFile(const char* fileName)
+int readSequenceFile(char* fileName)
 {
    assert(fileName);
    
@@ -152,8 +152,11 @@ void *watchman(void *data)
 void capture_sampling_init (int pid)
 {
    int ret;
+   char *envSeqUtoPath = NULL;
 
-   if ( readSequenceFile("sequence.utopik") != 0 )
+   envSeqUtoPath = getenv("SEQUTO_PATH");
+
+   if ( readSequenceFile(envSeqUtoPath) != 0 )
    {
       return;
    }
